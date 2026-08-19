@@ -10,9 +10,7 @@
 * Khó vận hành khi mở rộng hệ thống.
 * Khó khăn về thông báo.
 
----
-
-## 2. GIẢI PHÁP CHO HỆ THỐNG CAB SYSTEM
+## * GIẢI PHÁP CHO HỆ THỐNG CAB SYSTEM
 
 * Xây dựng ứng dụng CAB System đầy đủ chức năng đặt xe, theo dõi chuyến, thanh toán và đánh giá.
 * Tự động tìm và phân công tài xế phù hợp dựa trên vị trí, trạng thái và loại xe. Nếu tài xế từ chối, tự động tìm tài xế khác.
@@ -23,7 +21,7 @@
 
 ---
 
-## 3. XÁC ĐỊNH CÁC STAKEHOLDER
+## 2. XÁC ĐỊNH CÁC STAKEHOLDER
 
 | STT | Stakeholder                           | Vai trò trong hệ thống                                                                                                |
 | :-- | :------------------------------------ | :-------------------------------------------------------------------------------------------------------------------- |
@@ -56,7 +54,7 @@ quadrantChart
 
 ---
 
-## 4. XÁC ĐỊNH BUSINESS GOAL
+## 3. XÁC ĐỊNH BUSINESS GOAL
 
 ### 1. Tự động hóa quy trình đặt xe
 
@@ -90,7 +88,7 @@ Xây dựng nền tảng có khả năng phục vụ số lượng lớn khách 
 
 Thiết kế hệ thống linh hoạt để trong tương lai có thể thêm loại dịch vụ, phương thức thanh toán, kênh thông báo và thay đổi thành phần kỹ thuật mà không phải xây dựng lại toàn bộ hệ thống.
 
-## 5. XÁC ĐỊNH PHẠM VI HỆ THỐNG
+## 4. XÁC ĐỊNH PHẠM VI HỆ THỐNG
 
 Trong thời gian **7 tuần**, dự án tập trung xây dựng các chức năng cốt lõi của nền tảng CAB, bao gồm:
 
@@ -147,7 +145,9 @@ Trong thời gian **7 tuần**, dự án tập trung xây dựng các chức nă
 * Phân quyền cho nhân viên vận hành.
 * Thống kê số lượng chuyến, doanh thu, tỷ lệ hoàn thành, tỷ lệ hủy và hiệu quả tài xế.
 
-## 6. Yêu Cầu Nghiệp Vụ (Business Requirements)
+---
+
+## 5. Yêu Cầu Nghiệp Vụ (Business Requirements)
 
 ### 1. Nhóm Yêu Cầu Cho Khách Hàng (Customer Requirements)
 
@@ -187,6 +187,342 @@ Trong thời gian **7 tuần**, dự án tập trung xây dựng các chức nă
 * **Phân quyền bảo mật:** Các chức năng quản trị phải được phân quyền để nhân viên thông thường không thể thực hiện các thao tác nhạy cảm.
 * **Báo cáo thống kê:** Cung cấp báo cáo về số lượng chuyến, doanh thu, tỷ lệ chuyến hoàn thành, tỷ lệ hủy và hiệu quả hoạt động của tài xế cho Ban lãnh đạo.
 
+---
+
+# 6. PHÂN RÃ YÊU CẦU CHỨC NĂNG (FUNCTIONAL REQUIREMENTS)
+
+## 1. Quản lý tài khoản khách hàng
+
+### FR-CUS-01: Đăng ký tài khoản
+
+* Khách hàng nhập các thông tin cần thiết để đăng ký tài khoản.
+* Hệ thống kiểm tra tính hợp lệ của thông tin.
+* Hệ thống kiểm tra tài khoản đã tồn tại hay chưa.
+* Nếu thông tin hợp lệ, hệ thống tạo tài khoản khách hàng.
+
+### FR-CUS-02: Đăng nhập
+
+* Khách hàng nhập thông tin đăng nhập.
+* Hệ thống xác thực thông tin tài khoản.
+* Nếu thông tin chính xác, hệ thống cho phép khách hàng truy cập các chức năng dành cho khách hàng.
+* Nếu thông tin không chính xác, hệ thống thông báo lỗi.
+
+### FR-CUS-03: Cập nhật thông tin cá nhân
+
+* Khách hàng có thể xem thông tin cá nhân.
+* Khách hàng có thể cập nhật các thông tin được phép thay đổi.
+* Hệ thống kiểm tra tính hợp lệ trước khi lưu thông tin.
+
+---
+
+## 2. Đặt xe và theo dõi chuyến đi
+
+### FR-BOOK-01: Nhập thông tin chuyến xe
+
+* Khách hàng nhập điểm đón.
+* Khách hàng nhập điểm đến.
+* Khách hàng lựa chọn loại xe/dịch vụ.
+* Hệ thống kiểm tra thông tin chuyến trước khi tiếp nhận.
+
+### FR-BOOK-02: Tạo yêu cầu đặt xe
+
+* Khách hàng gửi yêu cầu đặt xe.
+* Hệ thống tạo chuyến đi với trạng thái **Đang tìm tài xế**.
+* Hệ thống chuyển yêu cầu đến chức năng tìm và phân công tài xế.
+
+### FR-BOOK-03: Theo dõi trạng thái chuyến
+
+* Khách hàng có thể xem trạng thái hiện tại của chuyến.
+* Hệ thống cập nhật trạng thái khi chuyến thay đổi.
+* Các trạng thái chính gồm: Đang tìm tài xế, Đã nhận tài xế, Tài xế đã đến, Đã đón khách, Đang di chuyển và Hoàn thành.
+
+### FR-BOOK-04: Xem thông tin tài xế
+
+* Sau khi tài xế nhận chuyến, khách hàng có thể xem thông tin tài xế.
+* Khách hàng có thể xem thông tin phương tiện.
+* Khách hàng có thể xem thời gian dự kiến tài xế đến.
+
+---
+
+## 3. Quản lý tài xế và phương tiện
+
+### FR-DRV-01: Quản lý hồ sơ tài xế
+
+* Tài xế có thể đăng ký tài khoản hoặc được nhân viên vận hành tạo tài khoản.
+* Tài xế có thể xem và cập nhật thông tin hồ sơ.
+* Hệ thống lưu thông tin tài xế.
+
+### FR-DRV-02: Quản lý thông tin phương tiện
+
+* Tài xế có thể cập nhật thông tin phương tiện.
+* Hệ thống lưu thông tin phương tiện gắn với tài xế.
+* Nhân viên vận hành có thể tra cứu thông tin phương tiện.
+
+### FR-DRV-03: Cập nhật trạng thái hoạt động
+
+* Tài xế có thể chuyển sang trạng thái sẵn sàng nhận chuyến.
+* Tài xế có thể chuyển sang trạng thái không sẵn sàng.
+* Hệ thống sử dụng trạng thái này trong quá trình tìm tài xế.
+
+### FR-DRV-04: Cập nhật vị trí
+
+* Hệ thống tiếp nhận thông tin vị trí của tài xế.
+* Hệ thống lưu thông tin vị trí phục vụ việc tìm tài xế phù hợp.
+* Thông tin vị trí được sử dụng để hỗ trợ tính thời gian dự kiến tài xế đến.
+
+---
+
+## 4. Xử lý và ghép đôi tài xế
+
+### FR-MAT-01: Tìm tài xế phù hợp
+
+* Hệ thống tiếp nhận yêu cầu tìm tài xế từ chuyến mới.
+* Hệ thống xác định các tài xế đang sẵn sàng nhận chuyến.
+* Hệ thống xem xét vị trí và loại xe phù hợp.
+* Hệ thống ưu tiên tài xế phù hợp và gần khách hàng.
+
+### FR-MAT-02: Gửi yêu cầu nhận chuyến
+
+* Hệ thống gửi thông báo yêu cầu nhận chuyến đến tài xế phù hợp.
+* Tài xế có thể chấp nhận hoặc từ chối chuyến.
+* Hệ thống ghi nhận kết quả phản hồi của tài xế.
+
+### FR-MAT-03: Tự động tìm tài xế khác
+
+* Nếu tài xế từ chối chuyến, hệ thống tiếp tục tìm tài xế khác.
+* Nếu tài xế không phản hồi trong thời gian quy định, hệ thống tiếp tục tìm tài xế khác.
+* Khách hàng không cần tạo lại yêu cầu đặt xe.
+
+### FR-MAT-04: Không tìm được tài xế
+
+* Hệ thống xác định khi không còn tài xế phù hợp.
+* Hệ thống cập nhật trạng thái yêu cầu.
+* Hệ thống thông báo rõ ràng cho khách hàng.
+
+---
+
+## 5. Thực hiện và cập nhật chuyến đi
+
+### FR-TRIP-01: Tài xế bắt đầu thực hiện chuyến
+
+* Sau khi nhận chuyến, tài xế có thể bắt đầu thực hiện chuyến.
+* Hệ thống cập nhật trạng thái chuyến tương ứng.
+
+### FR-TRIP-02: Cập nhật trạng thái hành trình
+
+* Tài xế cập nhật trạng thái **Đã đến điểm đón**.
+* Tài xế cập nhật trạng thái **Đã đón khách**.
+* Tài xế cập nhật trạng thái **Đang di chuyển**.
+* Tài xế cập nhật trạng thái **Hoàn thành chuyến**.
+
+### FR-TRIP-03: Theo dõi vị trí tài xế
+
+* Hệ thống cập nhật vị trí tài xế trong quá trình thực hiện chuyến.
+* Khách hàng có thể theo dõi vị trí tài xế theo thông tin hệ thống cung cấp.
+
+---
+
+## 6. Tính cước và thanh toán
+
+### FR-PAY-01: Tính cước chuyến đi
+
+* Khi chuyến hoàn thành, hệ thống xác định số tiền khách hàng phải trả.
+* Số tiền được tính dựa trên loại dịch vụ và thông tin chuyến đi.
+* Hệ thống lưu thông tin cước của chuyến.
+
+### FR-PAY-02: Thanh toán tiền mặt
+
+* Khách hàng có thể lựa chọn thanh toán bằng tiền mặt.
+* Hệ thống ghi nhận trạng thái thanh toán sau khi chuyến hoàn thành.
+
+### FR-PAY-03: Thanh toán điện tử
+
+* Khách hàng có thể lựa chọn phương thức thanh toán điện tử.
+* Hệ thống chuyển yêu cầu thanh toán đến nhà cung cấp bên ngoài.
+* Hệ thống tiếp nhận kết quả giao dịch.
+* Hệ thống không lưu trực tiếp thông tin nhạy cảm của thẻ hoặc tài khoản thanh toán.
+
+### FR-PAY-04: Xử lý thanh toán thất bại
+
+* Hệ thống ghi nhận giao dịch thất bại.
+* Hệ thống thông báo kết quả cho khách hàng.
+* Khách hàng có thể thực hiện lại thanh toán theo chính sách của doanh nghiệp.
+
+---
+
+## 7. Thông báo
+
+### FR-NOT-01: Thông báo cho khách hàng
+
+Hệ thống gửi thông báo khi:
+
+* Yêu cầu đặt xe được tiếp nhận.
+* Tài xế nhận chuyến.
+* Tài xế đến điểm đón.
+* Chuyến đi hoàn thành.
+* Thanh toán có kết quả.
+
+### FR-NOT-02: Thông báo cho tài xế
+
+Hệ thống gửi thông báo khi:
+
+* Có chuyến mới phù hợp.
+* Chuyến đang thực hiện có thay đổi.
+* Có các thông tin quan trọng liên quan đến chuyến.
+
+### FR-NOT-03: Quản lý kênh thông báo
+
+* Hệ thống hỗ trợ các kênh thông báo được doanh nghiệp lựa chọn.
+* Kiến trúc thông báo cho phép bổ sung thêm kênh mới trong tương lai.
+
+---
+
+## 8. Đánh giá và lịch sử chuyến đi
+
+### FR-HIS-01: Xem lịch sử chuyến
+
+* Khách hàng có thể xem danh sách các chuyến đã thực hiện.
+* Hệ thống hiển thị thông tin cơ bản của từng chuyến.
+* Khách hàng có thể xem chi tiết chuyến khi cần.
+
+### FR-HIS-02: Xem thông tin chi tiết chuyến
+
+* Hiển thị thông tin điểm đón, điểm đến.
+* Hiển thị thông tin tài xế và phương tiện.
+* Hiển thị trạng thái chuyến.
+* Hiển thị số tiền phải trả và trạng thái thanh toán.
+
+### FR-HIS-03: Đánh giá tài xế
+
+* Sau khi chuyến hoàn thành, khách hàng có thể đánh giá tài xế.
+* Hệ thống ghi nhận và lưu kết quả đánh giá.
+* Khách hàng không thể đánh giá chuyến chưa hoàn thành.
+
+---
+
+## 9. Quản trị và vận hành
+
+### FR-ADM-01: Quản lý khách hàng
+
+* Nhân viên vận hành có thể xem và tra cứu thông tin khách hàng.
+* Nhân viên có thể xem lịch sử chuyến của khách hàng.
+* Hệ thống kiểm soát quyền thực hiện các thao tác quản trị.
+
+### FR-ADM-02: Quản lý tài xế
+
+* Nhân viên vận hành có thể xem thông tin tài xế.
+* Theo dõi trạng thái hoạt động của tài xế.
+* Tra cứu thông tin phương tiện của tài xế.
+
+### FR-ADM-03: Quản lý chuyến đi
+
+* Nhân viên có thể xem các chuyến đang diễn ra.
+* Theo dõi trạng thái của từng chuyến.
+* Tra cứu lịch sử chuyến.
+* Hỗ trợ xử lý các trường hợp chuyến bị lỗi hoặc phát sinh.
+
+### FR-ADM-04: Quản lý giao dịch
+
+* Nhân viên có thể tra cứu lịch sử giao dịch.
+* Xem trạng thái thanh toán của chuyến.
+* Hỗ trợ kiểm tra các giao dịch thanh toán thất bại.
+
+### FR-ADM-05: Phân quyền quản trị
+
+* Hệ thống phân quyền chức năng theo vai trò nhân viên.
+* Nhân viên thông thường không được thực hiện các thao tác nhạy cảm nếu không có quyền.
+* Hệ thống kiểm soát quyền trước khi thực hiện thao tác quản trị.
+
+### FR-ADM-06: Báo cáo và thống kê
+
+* Thống kê số lượng chuyến.
+* Thống kê doanh thu.
+* Thống kê tỷ lệ chuyến hoàn thành.
+* Thống kê tỷ lệ chuyến hủy.
+* Thống kê hiệu quả hoạt động của tài xế.
+---
+## 7. USE CASE DIAGRAM
+
+```mermaid
+flowchart LR
+    %% Actors
+    Customer["👤 Khach hang"]
+    Driver["🚗 Tai xe"]
+    Operator["👨‍💼 Nhan vien van hanh"]
+    Payment["💳 Payment Provider"]
+
+    %% System boundary
+    subgraph CAB["CAB SYSTEM"]
+        
+        %% Customer use cases
+        UC1(["Quan ly tai khoan"])
+        UC2(["Dat xe"])
+        UC3(["Theo doi chuyen di"])
+        UC4(["Thanh toan"])
+        UC5(["Xem lich su chuyen"])
+        UC6(["Danh gia tai xe"])
+
+        %% Driver use cases
+        UC7(["Quan ly ho so & phuong tien"])
+        UC8(["Cap nhat trang thai"])
+        UC9(["Nhan / Tu choi chuyen"])
+        UC10(["Cap nhat hanh trinh"])
+        UC11(["Cap nhat vi tri"])
+
+        %% Matching
+        UC12(["Tim & phan cong tai xe"])
+        UC13(["Xu ly tai xe tu choi / khong phan hoi"])
+
+        %% Notification
+        UC14(["Gui thong bao"])
+
+        %% Admin
+        UC15(["Quan ly khach hang"])
+        UC16(["Quan ly tai xe & phuong tien"])
+        UC17(["Quan ly chuyen di"])
+        UC18(["Quan ly giao dich"])
+        UC19(["Bao cao & thong ke"])
+    end
+
+    %% Customer relationships
+    Customer --> UC1
+    Customer --> UC2
+    Customer --> UC3
+    Customer --> UC4
+    Customer --> UC5
+    Customer --> UC6
+
+    %% Driver relationships
+    Driver --> UC7
+    Driver --> UC8
+    Driver --> UC9
+    Driver --> UC10
+    Driver --> UC11
+
+    %% Matching relationships
+    UC2 --> UC12
+    UC12 --> UC13
+    UC13 --> UC12
+
+    %% Notification
+    UC2 --> UC14
+    UC9 --> UC14
+    UC10 --> UC14
+    UC4 --> UC14
+
+    %% Payment
+    UC4 --> Payment
+
+    %% Operator relationships
+    Operator --> UC15
+    Operator --> UC16
+    Operator --> UC17
+    Operator --> UC18
+    Operator --> UC19
+```
+9. ĐẶC TẢ USECASE 
+10. PHÂN TÍCH QUY TRÌNH NGHIỆP VỤ
+11. PHÂN TỊCH QUY TẮC NGHIỆP VỤ
 
 
 

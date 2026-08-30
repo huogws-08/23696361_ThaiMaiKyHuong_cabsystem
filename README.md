@@ -53,21 +53,28 @@ quadrantChart
 ```
 ---
 ## 3. XÁC ĐỊNH BUSINESS GOAL
-### 1. Tự động hóa quy trình đặt xe
+### Tự động hóa quy trình đặt xe
 Xây dựng hệ thống giúp khách hàng đặt xe trực tuyến và giảm sự phụ thuộc vào tổng đài hoặc quy trình thủ công.
-### 2. Tự động hóa việc tìm và phân công tài xế
+
+### Tự động hóa việc tìm và phân công tài xế
 Xây dựng cơ chế tự động tìm tài xế phù hợp, ưu tiên tài xế gần khách hàng và tự động tìm tài xế khác khi tài xế từ chối hoặc không phản hồi.
-### 3. Nâng cao trải nghiệm khách hàng
+
+### Nâng cao trải nghiệm khách hàng
 Cho phép khách hàng theo dõi trạng thái chuyến đi, vị trí tài xế, thời gian dự kiến đến, lịch sử chuyến và đánh giá tài xế.
-### 4. Quản lý thanh toán tập trung
+
+### Quản lý thanh toán tập trung
 Xây dựng cơ chế tính cước và quản lý thanh toán, hỗ trợ tiền mặt và thanh toán điện tử thông qua nhà cung cấp bên ngoài.
-### 5. Nâng cao hiệu quả vận hành
+
+### Nâng cao hiệu quả vận hành
 Cung cấp giao diện quản trị giúp nhân viên quản lý khách hàng, tài xế, phương tiện và chuyến đi, đồng thời xử lý các trường hợp phát sinh.
-### 6. Đảm bảo khả năng mở rộng
+
+### Đảm bảo khả năng mở rộng
 Xây dựng nền tảng có khả năng phục vụ số lượng lớn khách hàng và tài xế, đồng thời cho phép mở rộng từng thành phần khi nhu cầu tăng.
-### 7. Tăng tính ổn định và bảo mật
+
+### Tăng tính ổn định và bảo mật
 Đảm bảo hệ thống hoạt động ổn định khi tải cao, hạn chế việc một chức năng bị lỗi ảnh hưởng đến toàn bộ hệ thống và bảo vệ dữ liệu cá nhân, vị trí và giao dịch.
-### 8. Tạo nền tảng phát triển lâu dài
+
+### Tạo nền tảng phát triển lâu dài
 Thiết kế hệ thống linh hoạt để trong tương lai có thể thêm loại dịch vụ, phương thức thanh toán, kênh thông báo và thay đổi thành phần kỹ thuật mà không phải xây dựng lại toàn bộ hệ thống.
 ## 4. XÁC ĐỊNH PHẠM VI HỆ THỐNG
 Trong thời gian **7 tuần**, dự án tập trung xây dựng các chức năng cốt lõi của nền tảng CAB, bao gồm:

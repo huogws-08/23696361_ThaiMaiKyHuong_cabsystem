@@ -1,1 +1,137 @@
+openapi: 3.0.3
+info:
+  title: CAB System API Specification (7 Microservices)
+  description: Tài liệu API thiết kế theo cấu trúc 7 Microservices cho Hệ thống Đặt xe CAB System.
+  version: 1.0.0
+servers:
+  - url: https://api.cabsystem.com/v1
+    description: Production Server
+  - url: https://staging-api.cabsystem.com/v1
+    description: Staging Server
+  - url: http://localhost:8080/v1
+    description: Local Development Server
 
+tags:
+  - name: 1. User Service
+    description: Quản lý đăng ký, đăng nhập, xác thực và hồ sơ cá nhân
+  - name: 2. Booking & Trip Service
+    description: Nhập chuyến, tính cước ước tính, khởi tạo đặt xe, theo dõi hành trình
+  - name: 3. Driver & Vehicle Service
+    description: Quản lý phương tiện, trạng thái sẵn sàng và định vị GPS thời gian thực
+  - name: 4. Matching Service
+    description: Thuật toán ghép đôi, điều phối chuyến, xử lý tài xế từ chối
+  - name: 5. Payment Service
+    description: Tính cước hoàn thành, xử lý thanh toán và giao dịch lỗi
+  - name: 6. Notification Service
+    description: Quản lý và gửi thông báo theo sự kiện
+  - name: 7. Admin & Operations Service
+    description: Quản lý vận hành toàn hệ thống, xử lý sự cố chuyến đi và báo cáo
+
+paths:
+  /users/register:
+    post:
+      tags:
+        - 1. User Service
+      summary: Đăng ký tài khoản (Khách hàng / Tài xế)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - phone_number
+                - password
+                - full_name
+                - role
+              properties:
+                phone_number:
+                  type: string
+                  example: "0901234567"
+                password:
+                  type: string
+                  example: "Password123!"
+                full_name:
+                  type: string
+                  example: "Nguyen Van A"
+                email:
+                  type: string
+                  example: "nguyenvana@email.com"
+                role:
+                  type: string
+                  enum: [CUSTOMER, DRIVER]
+      responses:
+        '201':
+          description: Đăng ký tài khoản thành công
+
+  /users/login:
+    post:
+      tags:
+        - 1. User Service
+      summary: Đăng nhập hệ thống
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - phone_number
+                - password
+              properties:
+                phone_number:
+                  type: string
+                  example: "0901234567"
+                password:
+                  type: string
+                  example: "Password123!"
+      responses:
+        '200':
+          description: Đăng nhập thành công, trả về JWT Token
+
+  /bookings/estimate:
+    post:
+      tags:
+        - 2. Booking & Trip Service
+      summary: Nhập thông tin chuyến và tính cước ước tính
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - pickup_location
+                - dropoff_location
+              properties:
+                pickup_location:
+                  type: string
+                dropoff_location:
+                  type: string
+      responses:
+        '200':
+          description: Trả về cước phí tạm tính
+
+  /payments/process:
+    post:
+      tags:
+        - 5. Payment Service
+      summary: Xử lý thanh toán chuyến đi
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - trip_id
+                - payment_method
+              properties:
+                trip_id:
+                  type: string
+                payment_method:
+                  type: string
+                  enum: [CASH, E_WALLET]
+      responses:
+        '200':
+          description: Xử lý thanh toán thành công

@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: CAB System API Specification (7 Microservices)
-  description: Tài liệu API thiết kế theo cấu trúc 7 Microservices cho Hệ thống Đặt xe CAB System.
+  description: Tài liệu REST API hoàn chỉnh cho Hệ thống Đặt xe CAB System, thiết kế theo kiến trúc 7 Microservices đáp ứng đầy đủ Yêu cầu Chức năng.
   version: 1.0.0
 servers:
   - url: https://api.cabsystem.com/v1
@@ -13,26 +13,30 @@ servers:
 
 tags:
   - name: 1. User Service
-    description: Quản lý đăng ký, đăng nhập, xác thực và hồ sơ cá nhân
+    description: Quản lý đăng ký, đăng nhập, xác thực JWT và hồ sơ cá nhân (Khách hàng & Tài xế)
   - name: 2. Booking & Trip Service
-    description: Nhập chuyến, tính cước ước tính, khởi tạo đặt xe, theo dõi hành trình
+    description: Khởi tạo chuyến, tính cước tạm tính, theo dõi hành trình, xem lịch sử và đánh giá tài xế
   - name: 3. Driver & Vehicle Service
-    description: Quản lý phương tiện, trạng thái sẵn sàng và định vị GPS thời gian thực
+    description: Quản lý phương tiện, trạng thái sẵn sàng (Online/Offline) và định vị GPS thời gian thực
   - name: 4. Matching Service
-    description: Thuật toán ghép đôi, điều phối chuyến, xử lý tài xế từ chối
+    description: Thuật toán ghép đôi, điều phối chuyến, xử lý tài xế từ chối hoặc hết thời gian chờ
   - name: 5. Payment Service
-    description: Tính cước hoàn thành, xử lý thanh toán và giao dịch lỗi
+    description: Tính cước hoàn thành, xử lý thanh toán (Tiền mặt / Ví điện tử), Webhook và xử lý lỗi
   - name: 6. Notification Service
-    description: Quản lý và gửi thông báo theo sự kiện
+    description: Quản lý và gửi thông báo theo sự kiện realtime cho Khách hàng và Tài xế
   - name: 7. Admin & Operations Service
-    description: Quản lý vận hành toàn hệ thống, xử lý sự cố chuyến đi và báo cáo
+    description: Quản lý vận hành toàn hệ thống, xử lý sự cố chuyến đi và báo cáo thống kê cho Ban lãnh đạo
 
 paths:
+  # ==========================================
+  # 1. USER SERVICE
+  # ==========================================
   /users/register:
     post:
       tags:
         - 1. User Service
       summary: Đăng ký tài khoản (Khách hàng / Tài xế)
+      description: Kiểm tra tính hợp lệ và sự tồn tại của tài khoản trước khi khởi tạo.
       requestBody:
         required: true
         content:
@@ -63,12 +67,14 @@ paths:
       responses:
         '201':
           description: Đăng ký tài khoản thành công
+        '400':
+          description: Thông tin không hợp lệ hoặc tài khoản đã tồn tại
 
   /users/login:
     post:
       tags:
         - 1. User Service
-      summary: Đăng nhập hệ thống
+      summary: Đăng nhập hệ thống (Dùng chung cho tất cả vai trò)
       requestBody:
         required: true
         content:
@@ -87,13 +93,61 @@ paths:
                   example: "Password123!"
       responses:
         '200':
-          description: Đăng nhập thành công, trả về JWT Token
+          description: Đăng nhập thành công, trả về JWT Token và Role
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  role:
+                    type: string
+                    example: "CUSTOMER"
+        '401':
+          description: Sai thông tin đăng nhập
 
+  /users/profile:
+    get:
+      tags:
+        - 1. User Service
+      summary: Xem thông tin hồ sơ cá nhân
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Trả về thông tin cá nhân của tài khoản đang đăng nhập
+    put:
+      tags:
+        - 1. User Service
+      summary: Cập nhật thông tin hồ sơ cá nhân
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                full_name:
+                  type: string
+                email:
+                  type: string
+      responses:
+        '200':
+          description: Cập nhật hồ sơ thành công
+
+  # ==========================================
+  # 2. BOOKING & TRIP SERVICE
+  # ==========================================
   /bookings/estimate:
     post:
       tags:
         - 2. Booking & Trip Service
       summary: Nhập thông tin chuyến và tính cước ước tính
+      security:
+        - BearerAuth: []
       requestBody:
         required: true
         content:
@@ -103,20 +157,255 @@ paths:
               required:
                 - pickup_location
                 - dropoff_location
+                - service_type
               properties:
                 pickup_location:
-                  type: string
+                  $ref: '#/components/schemas/Location'
                 dropoff_location:
+                  $ref: '#/components/schemas/Location'
+                service_type:
+                  type: string
+                  example: "BIKE"
+      responses:
+        '200':
+          description: Trả về cước phí tạm tính và khoảng cách dự kiến
+
+  /bookings:
+    post:
+      tags:
+        - 2. Booking & Trip Service
+      summary: Khởi tạo yêu cầu đặt xe mới
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - pickup_location
+                - dropoff_location
+                - service_type
+                - payment_method
+              properties:
+                pickup_location:
+                  $ref: '#/components/schemas/Location'
+                dropoff_location:
+                  $ref: '#/components/schemas/Location'
+                service_type:
+                  type: string
+                  example: "BIKE"
+                payment_method:
+                  type: string
+                  enum: [CASH, E_WALLET]
+      responses:
+        '201':
+          description: Tạo yêu cầu thành công, chuyến đi ở trạng thái SEARCHING_DRIVER
+
+  /trips/{trip_id}:
+    get:
+      tags:
+        - 2. Booking & Trip Service
+      summary: Theo dõi trạng thái chuyến đi, ETA và thông tin tài xế/phương tiện
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: trip_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Cập nhật trạng thái chuyến đi thực tế (SEARCHING_DRIVER, DRIVER_ACCEPTED, DRIVER_ARRIVED, PICKED_UP, IN_TRANSIT, COMPLETED, NO_DRIVER_FOUND)
+
+  /trips/{trip_id}/status:
+    put:
+      tags:
+        - 2. Booking & Trip Service
+      summary: Cập nhật các mốc trạng thái chuyến đi (Dành cho Tài xế)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: trip_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+              properties:
+                status:
+                  type: string
+                  enum: [DRIVER_ARRIVED, PICKED_UP, IN_TRANSIT, COMPLETED]
+      responses:
+        '200':
+          description: Trạng thái hành trình đã cập nhật
+
+  /trips/history:
+    get:
+      tags:
+        - 2. Booking & Trip Service
+      summary: Xem lịch sử danh sách các chuyến đi đã thực hiện
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Danh sách lịch sử chuyến đi
+
+  /trips/{trip_id}/rate:
+    post:
+      tags:
+        - 2. Booking & Trip Service
+      summary: Đánh giá tài xế (Sau khi hoàn thành chuyến)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: trip_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - rating
+              properties:
+                rating:
+                  type: integer
+                  minimum: 1
+                  maximum: 5
+                comment:
                   type: string
       responses:
         '200':
-          description: Trả về cước phí tạm tính
+          description: Đánh giá tài xế thành công
+        '400':
+          description: Chuyến đi chưa hoàn thành, không thể đánh giá
 
+  # ==========================================
+  # 3. DRIVER & VEHICLE SERVICE
+  # ==========================================
+  /drivers/vehicle:
+    put:
+      tags:
+        - 3. Driver & Vehicle Service
+      summary: Cập nhật thông tin phương tiện tài xế
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - license_plate
+                - vehicle_type
+              properties:
+                license_plate:
+                  type: string
+                  example: "59-A1 12345"
+                vehicle_type:
+                  type: string
+                  example: "BIKE"
+                brand_model:
+                  type: string
+                  example: "Honda Wave"
+      responses:
+        '200':
+          description: Lưu thông tin phương tiện thành công
+
+  /drivers/status:
+    put:
+      tags:
+        - 3. Driver & Vehicle Service
+      summary: Cập nhật trạng thái sẵn sàng nhận chuyến (Online / Offline)
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - is_online
+              properties:
+                is_online:
+                  type: boolean
+                  example: true
+      responses:
+        '200':
+          description: Đã cập nhật trạng thái hoạt động
+
+  /drivers/location:
+    post:
+      tags:
+        - 3. Driver & Vehicle Service
+      summary: Cập nhật tọa độ GPS thời gian thực của tài xế
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Location'
+      responses:
+        '200':
+          description: Ghi nhận vị trí GPS thành công
+
+  # ==========================================
+  # 4. MATCHING SERVICE
+  # ==========================================
+  /matching/respond:
+    post:
+      tags:
+        - 4. Matching Service
+      summary: Tài xế phản hồi chuyến được đề xuất (Chấp nhận / Từ chối)
+      description: Nếu từ chối hoặc hết thời gian chờ, hệ thống tự động tìm tài xế khác mà khách không phải tạo lại đơn.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - trip_id
+                - accepted
+              properties:
+                trip_id:
+                  type: string
+                accepted:
+                  type: boolean
+      responses:
+        '200':
+          description: Ghi nhận phản hồi và xử lý điều phối tiếp theo
+
+  # ==========================================
+  # 5. PAYMENT SERVICE
+  # ==========================================
   /payments/process:
     post:
       tags:
         - 5. Payment Service
-      summary: Xử lý thanh toán chuyến đi
+      summary: Xử lý thanh toán chuyến đi (Tiền mặt / Cổng thanh toán điện tử)
+      security:
+        - BearerAuth: []
       requestBody:
         required: true
         content:
@@ -135,3 +424,165 @@ paths:
       responses:
         '200':
           description: Xử lý thanh toán thành công
+        '400':
+          description: Giao dịch thất bại
+
+  /payments/retry:
+    post:
+      tags:
+        - 5. Payment Service
+      summary: Thử lại thanh toán khi giao dịch điện tử gặp lỗi
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - trip_id
+                - payment_method
+              properties:
+                trip_id:
+                  type: string
+                payment_method:
+                  type: string
+                  enum: [CASH, E_WALLET]
+      responses:
+        '200':
+          description: Thực hiện lại thanh toán thành công
+
+  /payments/webhook:
+    post:
+      tags:
+        - 5. Payment Service
+      summary: Nhận Callback/Webhook kết quả từ Cổng thanh toán (MoMo/ZaloPay/VNPay)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                transaction_id:
+                  type: string
+                status:
+                  type: string
+                  enum: [SUCCESS, FAILED]
+      responses:
+        '200':
+          description: Ghi nhận trạng thái thanh toán từ đối tác
+
+  # ==========================================
+  # 6. NOTIFICATION SERVICE
+  # ==========================================
+  /notifications:
+    get:
+      tags:
+        - 6. Notification Service
+      summary: Lấy danh sách thông báo sự kiện của người dùng
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Trả về danh sách thông báo (đặt xe thành công, tài xế đến, thanh toán...)
+
+  # ==========================================
+  # 7. ADMIN & OPERATIONS SERVICE
+  # ==========================================
+  /admin/users:
+    get:
+      tags:
+        - 7. Admin & Operations Service
+      summary: Quản lý và tra cứu thông tin Khách hàng / Tài xế / Phương tiện
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: role
+          in: query
+          schema:
+            type: string
+            enum: [CUSTOMER, DRIVER]
+      responses:
+        '200':
+          description: Danh sách người dùng theo vai trò
+
+  /admin/trips/ongoing:
+    get:
+      tags:
+        - 7. Admin & Operations Service
+      summary: Giám sát danh sách các chuyến đi đang diễn ra
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Trả về các chuyến đi thời gian thực
+
+  /admin/trips/{trip_id}/resolve:
+    post:
+      tags:
+        - 7. Admin & Operations Service
+      summary: Hỗ trợ xử lý các trường hợp chuyến bị lỗi hoặc phát sinh sự cố
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: trip_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - action
+              properties:
+                action:
+                  type: string
+                  enum: [CANCEL_TRIP, REASSIGN_DRIVER, REFUND]
+                note:
+                  type: string
+      responses:
+        '200':
+          description: Xử lý sự cố chuyến đi thành công
+
+  /admin/reports/analytics:
+    get:
+      tags:
+        - 7. Admin & Operations Service
+      summary: Báo cáo thống kê dành cho Ban lãnh đạo (Doanh thu, Tỷ lệ chuyến hoàn thành/hủy, Hiệu quả tài xế)
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Trả về số liệu phân tích vận hành
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Location:
+      type: object
+      required:
+        - latitude
+        - longitude
+      properties:
+        address:
+          type: string
+          example: "227 Nguyễn Văn Cừ, Phường 4, Quận 5, TP.HCM"
+        latitude:
+          type: number
+          format: double
+          example: 10.762622
+        longitude:
+          type: number
+          format: double
+          example: 106.682229

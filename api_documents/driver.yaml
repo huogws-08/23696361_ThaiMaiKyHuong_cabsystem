@@ -1,0 +1,199 @@
+paths:
+  /driver/profile:
+    get:
+      tags:
+        - 3. Driver & Vehicle Service
+      summary: Hồ sơ tài xế
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Lấy thông tin bằng lái, chứng minh thư và điểm đánh giá
+        "401":
+          description: Chưa xác thực
+
+    put:
+      tags:
+        - 3. Driver & Vehicle Service
+      summary: Cập nhật hồ sơ tài xế
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                full_name:
+                  type: string
+                  example: "Nguyen Van B"
+                license_number:
+                  type: string
+                  example: "B2-123456789"
+                identification_number:
+                  type: string
+                  example: "079123456789"
+      responses:
+        "200":
+          description: Cập nhật thành công
+        "400":
+          description: Dữ liệu không hợp lệ
+        "401":
+          description: Chưa xác thực
+
+  /driver/vehicle:
+    get:
+      tags:
+        - 3. Driver & Vehicle Service
+      summary: Thông tin phương tiện
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Thông tin xe, biển số và loại xe
+        "401":
+          description: Chưa xác thực
+
+    put:
+      tags:
+        - 3. Driver & Vehicle Service
+      summary: Cập nhật phương tiện
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - vehicle_type
+                - license_plate
+              properties:
+                vehicle_type:
+                  type: string
+                  enum:
+                    - BIKE
+                    - CAR_4S
+                    - CAR_7S
+                  example: CAR_4S
+                license_plate:
+                  type: string
+                  example: "59A-12345"
+                brand:
+                  type: string
+                  example: "Toyota"
+      responses:
+        "200":
+          description: Cập nhật thông tin xe thành công
+        "400":
+          description: Dữ liệu không hợp lệ
+        "401":
+          description: Chưa xác thực
+
+  /driver/status:
+    patch:
+      tags:
+        - 3. Driver & Vehicle Service
+      summary: Trạng thái hoạt động
+      description: Tài xế bật hoặc tắt trạng thái sẵn sàng nhận chuyến.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+              properties:
+                status:
+                  type: string
+                  enum:
+                    - READY
+                    - NOT_READY
+                  example: READY
+      responses:
+        "200":
+          description: Cập nhật trạng thái hoạt động thành công
+        "400":
+          description: Trạng thái không hợp lệ
+        "401":
+          description: Chưa xác thực
+
+  /driver/gps:
+    post:
+      tags:
+        - 3. Driver & Vehicle Service
+      summary: Cập nhật vị trí GPS
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - latitude
+                - longitude
+              properties:
+                latitude:
+                  type: number
+                  format: double
+                  example: 10.7769
+                longitude:
+                  type: number
+                  format: double
+                  example: 106.7009
+                heading:
+                  type: number
+                  format: double
+                  example: 180.0
+      responses:
+        "200":
+          description: Đã ghi nhận tọa độ mới
+        "400":
+          description: Tọa độ không hợp lệ
+        "401":
+          description: Chưa xác thực
+
+  /driver/requests/respond:
+    post:
+      tags:
+        - 3. Driver & Vehicle Service
+      summary: Phản hồi yêu cầu chuyến
+      description: Tài xế chấp nhận hoặc từ chối chuyến được phân công.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - trip_id
+                - action
+              properties:
+                trip_id:
+                  type: string
+                  example: TRIP-001
+                action:
+                  type: string
+                  enum:
+                    - ACCEPT
+                    - REJECT
+                  example: REJECT
+                reason:
+                  type: string
+                  example: "Xe bị hỏng hóc đột xuất"
+      responses:
+        "200":
+          description: Đã ghi nhận phản hồi của tài xế
+        "400":
+          description: Dữ liệu không hợp lệ
+        "401":
+          description: Chưa xác thực

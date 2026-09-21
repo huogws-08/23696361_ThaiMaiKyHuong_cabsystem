@@ -1,0 +1,96 @@
+paths:
+  /admin/customers:
+    get:
+      tags:
+        - 7. Admin & Operations Service
+      summary: Quản lý khách hàng
+      description: Xem danh sách và trạng thái tài khoản khách hàng.
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Danh sách khách hàng
+        "401":
+          description: Chưa xác thực
+        "403":
+          description: Không có quyền quản trị
+
+  /admin/drivers:
+    get:
+      tags:
+        - 7. Admin & Operations Service
+      summary: Quản lý tài xế
+      description: Xem danh sách, duyệt hồ sơ và khóa tài xế.
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Danh sách tài xế
+        "401":
+          description: Chưa xác thực
+        "403":
+          description: Không có quyền quản trị
+
+  /admin/trips:
+    get:
+      tags:
+        - 7. Admin & Operations Service
+      summary: Quản lý chuyến đi
+      description: Tra cứu và quản lý toàn bộ chuyến đi trên hệ thống.
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Danh sách chuyến đi
+        "401":
+          description: Chưa xác thực
+        "403":
+          description: Không có quyền quản trị
+
+  /admin/transactions:
+    get:
+      tags:
+        - 7. Admin & Operations Service
+      summary: Quản lý giao dịch
+      description: Tra cứu và đối soát lịch sử các giao dịch thanh toán.
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Danh sách giao dịch thanh toán
+        "401":
+          description: Chưa xác thực
+        "403":
+          description: Không có quyền quản trị
+
+  /admin/roles:
+    get:
+      tags:
+        - 7. Admin & Operations Service
+      summary: Phân quyền
+      description: Quản lý nhóm quyền quản trị và quyền truy cập.
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Danh sách nhóm quyền quản trị
+        "401":
+          description: Chưa xác thực
+        "403":
+          description: Không có quyền quản trị
+
+  /admin/reports/analytics:
+    get:
+      tags:
+        - 7. Admin & Operations Service
+      summary: Báo cáo và thống kê
+      description: Báo cáo doanh thu, số lượng chuyến, tỷ lệ hoàn thành và tỷ lệ hủy.
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Báo cáo thống kê
+        "401":
+          description: Chưa xác thực
+        "403":
+          description: Không có quyền quản trị

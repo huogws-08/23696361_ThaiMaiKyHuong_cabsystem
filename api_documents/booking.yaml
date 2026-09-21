@@ -1,0 +1,171 @@
+paths:
+  /bookings:
+    post:
+      tags:
+        - 2. Booking & Trip Service
+      summary: Đặt xe
+      description: Khách hàng tạo yêu cầu đặt xe.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - pickup_location
+                - dropoff_location
+                - vehicle_type
+              properties:
+                pickup_location:
+                  type: object
+                  required:
+                    - address
+                    - latitude
+                    - longitude
+                  properties:
+                    address:
+                      type: string
+                      example: "123 Le Loi, Q1, HCM"
+                    latitude:
+                      type: number
+                      format: double
+                      example: 10.7769
+                    longitude:
+                      type: number
+                      format: double
+                      example: 106.7009
+
+                dropoff_location:
+                  type: object
+                  required:
+                    - address
+                    - latitude
+                    - longitude
+                  properties:
+                    address:
+                      type: string
+                      example: "456 Nguyen Hue, Q1, HCM"
+                    latitude:
+                      type: number
+                      format: double
+                      example: 10.7740
+                    longitude:
+                      type: number
+                      format: double
+                      example: 106.7030
+
+                vehicle_type:
+                  type: string
+                  enum:
+                    - BIKE
+                    - CAR_4S
+                    - CAR_7S
+                  example: BIKE
+      responses:
+        "201":
+          description: Khởi tạo đơn đặt xe thành công
+        "400":
+          description: Dữ liệu không hợp lệ
+        "401":
+          description: Chưa xác thực
+
+  /trips/{trip_id}/track:
+    get:
+      tags:
+        - 2. Booking & Trip Service
+      summary: Theo dõi chuyến
+      description: Theo dõi trạng thái chuyến đi và vị trí tài xế.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: trip_id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: TRIP-001
+      responses:
+        "200":
+          description: Trạng thái chuyến đi và tọa độ tài xế thời gian thực
+        "401":
+          description: Chưa xác thực
+        "404":
+          description: Không tìm thấy chuyến đi
+
+  /trips/history:
+    get:
+      tags:
+        - 2. Booking & Trip Service
+      summary: Lịch sử chuyến
+      description: Danh sách các chuyến đi đã hoàn thành hoặc đã hủy.
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Danh sách lịch sử chuyến đi
+        "401":
+          description: Chưa xác thực
+
+  /trips/{trip_id}:
+    get:
+      tags:
+        - 2. Booking & Trip Service
+      summary: Chi tiết chuyến
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: trip_id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: TRIP-001
+      responses:
+        "200":
+          description: Thông tin chi tiết toàn bộ chuyến đi
+        "401":
+          description: Chưa xác thực
+        "404":
+          description: Không tìm thấy chuyến đi
+
+  /trips/{trip_id}/rating:
+    post:
+      tags:
+        - 2. Booking & Trip Service
+      summary: Đánh giá tài xế
+      description: Khách hàng đánh giá tài xế sau khi chuyến đi hoàn thành.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: trip_id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: TRIP-001
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - rating
+              properties:
+                rating:
+                  type: integer
+                  minimum: 1
+                  maximum: 5
+                  example: 5
+                feedback:
+                  type: string
+                  example: "Tài xế lái xe an toàn, vui vẻ."
+      responses:
+        "200":
+          description: Gửi đánh giá thành công
+        "400":
+          description: Dữ liệu đánh giá không hợp lệ
+        "401":
+          description: Chưa xác thực

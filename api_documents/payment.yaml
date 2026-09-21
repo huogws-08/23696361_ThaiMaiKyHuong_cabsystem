@@ -1,0 +1,134 @@
+paths:
+  /pricing/estimate:
+    post:
+      tags:
+        - 5. Pricing & Payment Service
+      summary: Tính cước
+      description: Tính cước phí dựa trên khoảng cách, loại phương tiện và điều kiện giá hiện hành.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - distance_km
+                - vehicle_type
+              properties:
+                distance_km:
+                  type: number
+                  format: double
+                  minimum: 0
+                  example: 5.2
+                vehicle_type:
+                  type: string
+                  enum:
+                    - BIKE
+                    - CAR_4S
+                    - CAR_7S
+                  example: BIKE
+      responses:
+        "200":
+          description: Số tiền cước tính toán
+        "400":
+          description: Dữ liệu không hợp lệ
+
+  /payments/cash:
+    post:
+      tags:
+        - 5. Pricing & Payment Service
+      summary: Thanh toán tiền mặt
+      description: Xác nhận thanh toán tiền mặt cho chuyến đi.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - trip_id
+                - amount
+              properties:
+                trip_id:
+                  type: string
+                  example: TRIP-001
+                amount:
+                  type: number
+                  format: double
+                  example: 75000
+      responses:
+        "200":
+          description: Xác nhận thanh toán tiền mặt thành công
+        "400":
+          description: Dữ liệu không hợp lệ
+        "401":
+          description: Chưa xác thực
+
+  /payments/e-wallet:
+    post:
+      tags:
+        - 5. Pricing & Payment Service
+      summary: Thanh toán điện tử
+      description: Thanh toán thông qua nhà cung cấp dịch vụ thanh toán bên ngoài.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - trip_id
+                - amount
+              properties:
+                trip_id:
+                  type: string
+                  example: TRIP-001
+                amount:
+                  type: number
+                  format: double
+                  example: 75000
+      responses:
+        "200":
+          description: Trả về thông tin thanh toán hoặc đường dẫn thanh toán
+        "400":
+          description: Dữ liệu không hợp lệ
+        "401":
+          description: Chưa xác thực
+
+  /payments/webhook:
+    post:
+      tags:
+        - 5. Pricing & Payment Service
+      summary: Xử lý giao dịch từ cổng thanh toán
+      description: Nhận callback hoặc webhook từ nhà cung cấp thanh toán bên ngoài.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - transaction_id
+                - status
+              properties:
+                transaction_id:
+                  type: string
+                  example: TXN-001
+                status:
+                  type: string
+                  enum:
+                    - SUCCESS
+                    - FAILED
+                  example: SUCCESS
+                provider_transaction_id:
+                  type: string
+                  example: PROVIDER-TXN-123
+      responses:
+        "200":
+          description: Cập nhật trạng thái giao dịch thành công
+        "400":
+          description: Dữ liệu webhook không hợp lệ

@@ -1,0 +1,110 @@
+paths:
+  /auth/register:
+    post:
+      tags:
+        - 1. User & Authentication Service
+      summary: Đăng ký tài khoản
+      description: Đăng ký tài khoản mới cho Khách hàng hoặc Tài xế.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - phone_number
+                - password
+                - full_name
+                - role
+              properties:
+                phone_number:
+                  type: string
+                  example: "+84901234567"
+                password:
+                  type: string
+                  format: password
+                  example: "Password123!"
+                full_name:
+                  type: string
+                  example: "Nguyen Van A"
+                role:
+                  type: string
+                  enum:
+                    - CUSTOMER
+                    - DRIVER
+                  example: CUSTOMER
+      responses:
+        "201":
+          description: Đăng ký thành công
+        "400":
+          description: Dữ liệu không hợp lệ
+        "409":
+          description: Số điện thoại đã tồn tại
+
+  /auth/login:
+    post:
+      tags:
+        - 1. User & Authentication Service
+      summary: Đăng nhập
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - phone_number
+                - password
+              properties:
+                phone_number:
+                  type: string
+                  example: "+84901234567"
+                password:
+                  type: string
+                  format: password
+                  example: "Password123!"
+      responses:
+        "200":
+          description: Đăng nhập thành công, trả về Access Token
+        "401":
+          description: Sai số điện thoại hoặc mật khẩu
+
+  /users/me:
+    get:
+      tags:
+        - 1. User & Authentication Service
+      summary: Xem thông tin cá nhân
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Trả về thông tin cá nhân
+        "401":
+          description: Chưa xác thực
+
+    put:
+      tags:
+        - 1. User & Authentication Service
+      summary: Cập nhật thông tin cá nhân
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                full_name:
+                  type: string
+                  example: "Nguyen Van B"
+                phone_number:
+                  type: string
+                  example: "+84901234567"
+      responses:
+        "200":
+          description: Cập nhật thông tin thành công
+        "400":
+          description: Dữ liệu không hợp lệ
+        "401":
+          description: Chưa xác thực

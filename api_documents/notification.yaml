@@ -1,0 +1,99 @@
+paths:
+  /notifications/customer:
+    post:
+      tags:
+        - 6. Notification Service
+      summary: Thông báo khách hàng
+      description: Gửi Push Notification tới ứng dụng khách hàng.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user_id
+                - title
+                - message
+              properties:
+                user_id:
+                  type: string
+                  example: USER-001
+                title:
+                  type: string
+                  example: "Tài xế đã đến"
+                message:
+                  type: string
+                  example: "Tài xế đang chờ bạn tại điểm đón."
+      responses:
+        "200":
+          description: Gửi thông báo thành công
+
+  /notifications/driver:
+    post:
+      tags:
+        - 6. Notification Service
+      summary: Thông báo tài xế
+      description: Gửi Push Notification tới ứng dụng tài xế.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user_id
+                - title
+                - message
+              properties:
+                user_id:
+                  type: string
+                  example: DRIVER-001
+                title:
+                  type: string
+                  example: "Có yêu cầu chuyến mới"
+                message:
+                  type: string
+                  example: "Bạn có một yêu cầu chuyến mới."
+      responses:
+        "200":
+          description: Gửi thông báo thành công
+
+  /notifications/channels:
+    post:
+      tags:
+        - 6. Notification Service
+      summary: Đăng ký FCM Token
+      description: Đăng ký Token thiết bị để nhận Push Notification.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - device_token
+                - platform
+              properties:
+                device_token:
+                  type: string
+                  example: "fcm_token_123456789"
+                platform:
+                  type: string
+                  enum:
+                    - ANDROID
+                    - IOS
+                  example: ANDROID
+      responses:
+        "200":
+          description: Đăng ký Token thiết bị thành công
+        "400":
+          description: Dữ liệu không hợp lệ
+        "401":
+          description: Chưa xác thực

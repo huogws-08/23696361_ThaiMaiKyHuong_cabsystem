@@ -1,0 +1,139 @@
+paths:
+  /matching/find-drivers:
+    post:
+      tags:
+        - 4. Matching Service
+      summary: Tìm tài xế
+      description: Tìm các tài xế khả dụng xung quanh vị trí đón.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - latitude
+                - longitude
+                - vehicle_type
+              properties:
+                latitude:
+                  type: number
+                  format: double
+                  example: 10.7769
+                longitude:
+                  type: number
+                  format: double
+                  example: 106.7009
+                vehicle_type:
+                  type: string
+                  enum:
+                    - BIKE
+                    - CAR_4S
+                    - CAR_7S
+                  example: BIKE
+      responses:
+        "200":
+          description: Danh sách các tài xế khả dụng xung quanh vị trí đón
+        "400":
+          description: Dữ liệu không hợp lệ
+
+  /matching/assign:
+    post:
+      tags:
+        - 4. Matching Service
+      summary: Phân công tài xế
+      description: Phân công chuyến đi cho tài xế phù hợp nhất.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - trip_id
+                - driver_id
+              properties:
+                trip_id:
+                  type: string
+                  example: TRIP-001
+                driver_id:
+                  type: string
+                  example: DRIVER-001
+      responses:
+        "200":
+          description: Đã phát yêu cầu chuyến đi đến tài xế phù hợp nhất
+        "400":
+          description: Dữ liệu không hợp lệ
+
+  /matching/respond:
+    post:
+      tags:
+        - 4. Matching Service
+      summary: Xử lý từ chối từ tài xế
+      description: Ghi nhận việc tài xế từ chối và chuyển sang tìm tài xế khác.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - trip_id
+                - driver_id
+                - action
+              properties:
+                trip_id:
+                  type: string
+                  example: TRIP-001
+                driver_id:
+                  type: string
+                  example: DRIVER-001
+                action:
+                  type: string
+                  enum:
+                    - REJECT
+                  example: REJECT
+                reason:
+                  type: string
+                  example: "Không thể nhận chuyến"
+      responses:
+        "200":
+          description: Đã ghi nhận phản hồi và chuyển sang tìm tài xế khác
+        "400":
+          description: Dữ liệu không hợp lệ
+
+  /matching/timeout-handler:
+    post:
+      tags:
+        - 4. Matching Service
+      summary: Xử lý không phản hồi
+      description: Tự động hủy lệnh phân công cũ và tìm tài xế tiếp theo khi tài xế không phản hồi.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - trip_id
+                - driver_id
+              properties:
+                trip_id:
+                  type: string
+                  example: TRIP-001
+                driver_id:
+                  type: string
+                  example: DRIVER-001
+      responses:
+        "200":
+          description: Đã xử lý timeout và tiếp tục tìm tài xế
+        "400":
+          description: Dữ liệu không hợp lệ

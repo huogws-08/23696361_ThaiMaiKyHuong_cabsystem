@@ -1,3 +1,18 @@
+openapi: 3.0.3
+
+info:
+  title: Cab System - Driver & Vehicle Service API
+  version: 1.0.0
+  description: API quản lý hồ sơ tài xế, phương tiện, trạng thái hoạt động, vị trí GPS và phản hồi yêu cầu chuyến đi của hệ thống Cab System.
+
+servers:
+  - url: https://api.cabsystem.example.com/v1
+    description: Production Server
+
+tags:
+  - name: 3. Driver & Vehicle Service
+    description: Quản lý tài xế, phương tiện và trạng thái hoạt động.
+
 paths:
   /driver/profile:
     get:
@@ -197,3 +212,10 @@ paths:
           description: Dữ liệu không hợp lệ
         "401":
           description: Chưa xác thực
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

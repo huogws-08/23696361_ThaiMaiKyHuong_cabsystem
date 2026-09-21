@@ -1,3 +1,18 @@
+openapi: 3.0.3
+
+info:
+  title: Cab System - Admin & Operations Service API
+  version: 1.0.0
+  description: API quản lý khách hàng, tài xế, chuyến đi, giao dịch, phân quyền và báo cáo thống kê của hệ thống Cab System.
+
+servers:
+  - url: https://api.cabsystem.example.com/v1
+    description: Production Server
+
+tags:
+  - name: 7. Admin & Operations Service
+    description: Quản lý và vận hành hệ thống Cab System.
+
 paths:
   /admin/customers:
     get:
@@ -94,3 +109,10 @@ paths:
           description: Chưa xác thực
         "403":
           description: Không có quyền quản trị
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -1,3 +1,18 @@
+openapi: 3.0.3
+
+info:
+  title: Cab System - Matching Service API
+  version: 1.0.0
+  description: API tìm kiếm, phân công và xử lý phản hồi của tài xế trong quá trình ghép chuyến của hệ thống Cab System.
+
+servers:
+  - url: https://api.cabsystem.example.com/v1
+    description: Production Server
+
+tags:
+  - name: 4. Matching Service
+    description: Tìm kiếm và phân công tài xế cho chuyến đi.
+
 paths:
   /matching/find-drivers:
     post:
@@ -137,3 +152,10 @@ paths:
           description: Đã xử lý timeout và tiếp tục tìm tài xế
         "400":
           description: Dữ liệu không hợp lệ
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

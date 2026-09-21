@@ -1,3 +1,18 @@
+openapi: 3.0.3
+
+info:
+  title: Cab System - Pricing & Payment Service API
+  version: 1.0.0
+  description: API tính cước, thanh toán tiền mặt, thanh toán điện tử và xử lý giao dịch từ nhà cung cấp thanh toán của hệ thống Cab System.
+
+servers:
+  - url: https://api.cabsystem.example.com/v1
+    description: Production Server
+
+tags:
+  - name: 5. Pricing & Payment Service
+    description: Tính cước và xử lý các phương thức thanh toán.
+
 paths:
   /pricing/estimate:
     post:
@@ -132,3 +147,10 @@ paths:
           description: Cập nhật trạng thái giao dịch thành công
         "400":
           description: Dữ liệu webhook không hợp lệ
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

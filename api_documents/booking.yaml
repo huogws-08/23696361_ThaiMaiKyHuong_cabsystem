@@ -1,3 +1,18 @@
+openapi: 3.0.3
+
+info:
+  title: Cab System - Booking & Trip Service API
+  version: 1.0.0
+  description: API đặt xe, theo dõi chuyến đi, xem lịch sử, xem chi tiết chuyến và đánh giá tài xế của hệ thống Cab System.
+
+servers:
+  - url: https://api.cabsystem.example.com/v1
+    description: Production Server
+
+tags:
+  - name: 2. Booking & Trip Service
+    description: Đặt xe, quản lý và theo dõi chuyến đi.
+
 paths:
   /bookings:
     post:
@@ -169,3 +184,10 @@ paths:
           description: Dữ liệu đánh giá không hợp lệ
         "401":
           description: Chưa xác thực
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
